@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "462032008365",
+    "project_id": "mathequation-33aca",
+    "storage_bucket": "mathequation-33aca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462032008365:android:9a5d3f78d93c389e460224",
+        "android_client_info": {
+          "package_name": "dz.hemidi.mathxy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "462032008365-gleppiu7fhm1dchuq3v4dop872ec5e9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbjPDf0yneu-hOX5tqW_MufZ2YwtekghQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "462032008365-gleppiu7fhm1dchuq3v4dop872ec5e9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
