@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:mathxy/WIdget/Home/Homes2.dart';
 import 'package:flutter_share/flutter_share.dart';
 
@@ -16,7 +14,7 @@ class GotoHomesPages extends StatefulWidget {
 
 class _GotoHomesPagesState extends State<GotoHomesPages> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _nativeAdController = NativeAdmobController();
+  //final _nativeAdController = NativeAdmobController();
 
   @override
   void initState() {
@@ -86,19 +84,7 @@ class _GotoHomesPagesState extends State<GotoHomesPages> {
             child: Image.asset('issues/images/panner.png'),
           ),
           HomePage(),
-          Container(
-            height: 90,
-            padding: EdgeInsets.all(10),
-            margin: EdgeInsets.only(bottom: 20.0),
-            child: NativeAdmob(
-              // Your ad unit id
-              adUnitID: 'ca-app-pub-1803778669602445/9411421168',
-              numberAds: 3,
-              controller: _nativeAdController,
-              type: NativeAdmobType.banner,
-              loading: Container(),
-            ),
-          ),
+
         ],
       ),
     );

@@ -1,9 +1,6 @@
 import 'dart:math';
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:google_fonts_arabic/fonts.dart';
 import 'package:mathxy/Serves/Ads.dart';
@@ -26,8 +23,6 @@ class Equation2 extends StatefulWidget {
 }
 
 class _PgcdState1 extends State<Equation2> {
-  final _nativeAdController = NativeAdmobController();
-  InterstitialAd _interstitialAd;
   final adm =  ManageAds() ;
 
 
@@ -50,7 +45,6 @@ class _PgcdState1 extends State<Equation2> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _interstitialAd = adm.createInterstitialAd()..load() ;
 
 
   }
@@ -157,19 +151,7 @@ class _PgcdState1 extends State<Equation2> {
               )),
         ),
 
-        Container(
-          height: 90,
-          padding: EdgeInsets.all(10),
-          margin: EdgeInsets.only(bottom: 20.0),
-          child: NativeAdmob(
-            // Your ad unit id
-            adUnitID: 'ca-app-pub-1803778669602445/9411421168',
-            numberAds: 1,
-            controller: _nativeAdController,
-            type: NativeAdmobType.banner,
-            loading: Container(),
-          ),
-        ),
+
 
 
         Row(
@@ -417,7 +399,6 @@ class _PgcdState1 extends State<Equation2> {
                     minWidth: MediaQuery.of(context).size.width * 0.5,
                     padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                     onPressed: () async {
-                      _interstitialAd?.show();
 
                       setState(() {
                         method = ' ';
