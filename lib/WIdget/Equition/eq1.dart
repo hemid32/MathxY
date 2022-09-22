@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_admob/flutter_native_admob.dart';
 import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:flutter_tex/flutter_tex.dart';
-import 'package:google_fonts_arabic/fonts.dart';
 import 'package:mathxy/Serves/Ads.dart';
+import 'package:mathxy/thems.dart';
 
 
 /*
@@ -77,13 +77,7 @@ class _PgcdState1 extends State<Eqution1> {
     return  Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.limeAccent,
-          title: Center(child: Text('معادلة من الدرجة الاولى' , style:   TextStyle(
-            fontFamily: ArabicFonts.Cairo,
-            package: 'google_fonts_arabic',
-            fontSize: 20.0,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),)),
+          title: Center(child: Text('معادلة من الدرجة الاولى' , style:  txtStyleAppBar)),
 
         ),
 
@@ -156,13 +150,7 @@ class _PgcdState1 extends State<Eqution1> {
                 child: Container(
                   child: Text(
                     'اضغط على a و b لادخال القيم',
-                    style: TextStyle(
-                      fontFamily: ArabicFonts.Cairo,
-                      package: 'google_fonts_arabic',
-                      fontSize: 16.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: txtStyle
                   ),
                 ),
               )),
@@ -327,13 +315,7 @@ class _PgcdState1 extends State<Eqution1> {
 
                   child: Column(
                     children: [
-                      Text('الحل' ,style: TextStyle(
-                        fontFamily: ArabicFonts.Cairo,
-                        package: 'google_fonts_arabic',
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),),
+                      Text('الحل' ,style: txtStyle),
                       rslt.trim() == '' ? Container():  TeXView(
                           style: TeXViewStyle(
                             elevation: 10,
@@ -352,13 +334,7 @@ class _PgcdState1 extends State<Eqution1> {
                             )
                           ])),
                   Text(
-                    'طريقة الحل' ,style: TextStyle(
-                    fontFamily: ArabicFonts.Cairo,
-                    package: 'google_fonts_arabic',
-                    fontSize: 16.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),),
+                    'طريقة الحل' ,style: txtStyle),
                      method.trim() == '' ? Container() :  TeXView(
                           style: TeXViewStyle(
                             elevation: 10,
@@ -433,13 +409,7 @@ class _PgcdState1 extends State<Eqution1> {
                     child: Text(
                       "احسب",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: ArabicFonts.Cairo,
-                        package: 'google_fonts_arabic',
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style:txtStyle
                     ),
                   ),
                 ),
