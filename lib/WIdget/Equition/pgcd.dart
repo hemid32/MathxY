@@ -1,8 +1,6 @@
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/flutter_native_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
+import 'package:google_fonts_arabic/fonts.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:mathxy/Serves/Ads.dart';
 import 'package:mathxy/thems.dart';
@@ -26,8 +24,6 @@ class CalculePgcd extends StatefulWidget {
 }
 
 class _CalculePgcdState extends State<CalculePgcd> {
-  final _nativeAdController = NativeAdmobController();
-  InterstitialAd _interstitialAd;
   final adm =  ManageAds() ;
 
 
@@ -49,7 +45,6 @@ class _CalculePgcdState extends State<CalculePgcd> {
     // TODO: implement initState
     super.initState();
     //FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
-    _interstitialAd = adm.createInterstitialAd()..load() ;
     print('hemidi');
 
 
@@ -137,19 +132,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                 ),
               )),
         ),
-        Container(
-          height: 90,
-          padding: EdgeInsets.all(10),
-          margin: EdgeInsets.only(bottom: 20.0),
-          child: NativeAdmob(
-            // Your ad unit id
-            adUnitID: 'ca-app-pub-1803778669602445/9411421168',
-            numberAds: 1,
-            controller: _nativeAdController,
-            type: NativeAdmobType.banner,
-            loading: Container(),
-          ),
-        ),
+
 
 
 
@@ -349,7 +332,6 @@ class _CalculePgcdState extends State<CalculePgcd> {
                     minWidth: MediaQuery.of(context).size.width * 0.5,
                     padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                     onPressed: () async {
-                      _interstitialAd?.show() ;
 
 
                       setState(() {

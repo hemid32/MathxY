@@ -31,13 +31,13 @@ dependencies:
   http: ^0.12.1  #
   #scrapy: ^0.0.3   #
   html: ^0.14.0+3  #
-  #firebase_auth:
+  #firebase_auth: ^0.18.4+1
   #cloud_firestore: ^0.13.7
-  #firebase_core:
-  #firebase_analytics:
+  #firebase_core:  ^0.5.3
+  #firebase_analytics: ^6.3.0
   #sqflite: any
   #path_provider: any #
-  intl:
+  intl: ^0.17.0
   queries: ^0.1.14
   #async_loader: ^0.1.2 #
   #email_validator: ^1.0.4
@@ -49,7 +49,7 @@ dependencies:
   #cached_network_image: ^2.2.0+1
   #transparent_image: ^1.0.0
   #audioplayers: ^0.15.1
-  firebase_admob: ^0.10.3
+  #firebase_admob: ^0.10.3
   #admob_flutter: ^1.0.1
   flutter_tex:
   #webview_flutter: ^1.0.3
@@ -61,7 +61,7 @@ dependencies:
   #provider: ^4.3.2+2
   #awesome_dialog: ^1.2.1
   #slide_countdown_clock: ^1.0.3
-  flutter_native_admob: ^2.1.0+3
+  #flutter_native_admob: ^2.1.0+3
   #sentry_flutter: ^4.0.1
   flutter_plot: ^0.0.4
   math_expressions: ^2.0.1

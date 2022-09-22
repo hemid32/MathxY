@@ -1,8 +1,6 @@
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:mathxy/Screen/home_page.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -15,9 +13,8 @@ void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
 
-        FirebaseAdMob.instance.initialize(appId:'ca-app-pub-1803778669602445~6902545696' );
+
 
 
       runApp(MaterialApp(
