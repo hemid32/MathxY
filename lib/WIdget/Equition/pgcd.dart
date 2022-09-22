@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts_arabic/fonts.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:mathxy/Serves/Ads.dart';
+import 'package:mathxy/thems.dart';
 
 
 /*
@@ -64,13 +65,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.limeAccent,
-        title: Center(child: Text('القاسم المشترك الاكبر' , style:  TextStyle(
-          fontFamily: ArabicFonts.Cairo,
-          package: 'google_fonts_arabic',
-          fontSize: 20.0,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),)),
+        title: Center(child: Text('القاسم المشترك الاكبر' , style: txtStyleAppBar)),
 
       ),
 
@@ -114,13 +109,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                 Text(
                   'PGCD(a , b)',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: ArabicFonts.Cairo,
-                    package: 'google_fonts_arabic',
-                    fontSize: 16.0,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: txtStyle ,
                 ),
                 //padding: EdgeInsets.only(left:50),
 
@@ -138,13 +127,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                   padding: EdgeInsets.all(20),
                   child: Text(
                     'اضغط على a و b لادخال القيم',
-                    style: TextStyle(
-                      fontFamily: ArabicFonts.Cairo,
-                      package: 'google_fonts_arabic',
-                      fontSize: 16.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: txtStyle ,
                   ),
                 ),
               )),
@@ -288,13 +271,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                   child: Column(
                     children: [
 
-                      Text('الحل' ,style: TextStyle(
-                        fontFamily: ArabicFonts.Cairo,
-                        package: 'google_fonts_arabic',
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),),
+                      Text('الحل' ,style:txtStyle ),
                       rslt.trim() == '' ? Container():  TeXView(
                           style: TeXViewStyle(
                             elevation: 10,
@@ -314,13 +291,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                           ])),
 
                       Text(
-                        'طريقة الحل' ,style: TextStyle(
-                        fontFamily: ArabicFonts.Cairo,
-                        package: 'google_fonts_arabic',
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                        'طريقة الحل' ,style:txtStyle
                       ),
                       method.trim() == '' ? Container() : TeXView(
                           style: TeXViewStyle(
@@ -403,13 +374,7 @@ class _CalculePgcdState extends State<CalculePgcd> {
                     child: Text(
                       "احسب",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: ArabicFonts.Cairo,
-                        package: 'google_fonts_arabic',
-                        fontSize: 20.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: txtStyle
                     ),
                   ),
                 ),

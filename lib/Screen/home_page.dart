@@ -84,8 +84,7 @@ class _GotoHomesPagesState extends State<GotoHomesPages> {
             child: Image.asset('issues/images/panner.png'),
           ),
           HomePage(),
-
-        ],
+          ],
       ),
     );
   }
