@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Screen/devision/screenintegral.dart';
 import 'package:mathxy/Screen/integral/screenintegral.dart';
 import 'package:mathxy/WIdget/Equition/Function/FunctionDesign.dart';
 import 'package:mathxy/WIdget/Equition/eq1.dart';
 import 'package:mathxy/WIdget/Equition/eqt2.dart';
 import 'package:mathxy/WIdget/Equition/pgcd.dart';
+import 'package:mathxy/api/ads.dart';
 import 'package:mathxy/thems.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,8 +22,157 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  BannerAd _anchoredAdaptiveAd;
+  bool _isLoaded = false;
+   Orientation _currentOrientation;
+  ////////////
+
+  InterstitialAd _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId:Ads.instit,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < 5) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd.show();
+    _interstitialAd = null;
+  }
 
 
+
+   ////////////
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _currentOrientation = MediaQuery.of(context).orientation;
+    _loadAd();
+  }
+
+
+
+
+  /// Load another ad, disposing of the current ad if there is one.
+  Future<void> _loadAd() async {
+    await _anchoredAdaptiveAd?.dispose();
+    setState(() {
+      _anchoredAdaptiveAd = null;
+      _isLoaded = false;
+    });
+
+    final AnchoredAdaptiveBannerAdSize size =
+    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        MediaQuery.of(context).size.width.truncate());
+
+    if (size == null) {
+      print('Unable to get height of anchored banner.');
+      return;
+    }
+
+    _anchoredAdaptiveAd = BannerAd(
+      adUnitId: Ads.banner,
+      size: size,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded: ${ad.responseInfo}');
+          setState(() {
+            // When the ad is loaded, get the ad size and use it to set
+            // the height of the ad container.
+            _anchoredAdaptiveAd = ad as BannerAd;
+            _isLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    );
+    return _anchoredAdaptiveAd.load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _anchoredAdaptiveAd?.dispose();
+    _interstitialAd?.dispose();
+
+  }
+
+
+  /// Gets a widget containing the ad, if one is loaded.
+  ///
+  /// Returns an empty container if no ad is loaded, or the orientation
+  /// has changed. Also loads a new ad if the orientation changes.
+  Widget _getAdWidget() {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        if (_currentOrientation == orientation &&
+            _anchoredAdaptiveAd != null &&
+            _isLoaded) {
+          return Container(
+            //color: Colors.green,
+            width: _anchoredAdaptiveAd.size.width.toDouble(),
+            height: _anchoredAdaptiveAd.size.height.toDouble(),
+            child: AdWidget(ad: _anchoredAdaptiveAd),
+          );
+        }
+        // Reload the ad if the orientation changes.
+        if (_currentOrientation != orientation) {
+          _currentOrientation = orientation;
+          _loadAd();
+        }
+        return Container();
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _createInterstitialAd();
+    _loadAd() ;
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +196,7 @@ class _HomePageState extends State<HomePage> {
               height: 80.0,
               child: GestureDetector(
                 onTap: () {
+                  _showInterstitialAd();
                   //Provider.of<MyProvider>(context, listen: false).GetFunctionDesign(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('رسم دالة ');
                   //DesignFunction
@@ -104,6 +258,8 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Pgcd(true);
                   //Provider.of<MyProvider>(context, listen: false)
                   //    .GetStringAppAbar('حساب PGCD');
+                  _showInterstitialAd();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => CalculePgcd()),
@@ -165,6 +321,8 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq1(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 1 ');
                   //Eqution1
+                  _showInterstitialAd();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Eqution1()),
@@ -211,6 +369,8 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq2(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
+                  _showInterstitialAd();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => Equation2()),
@@ -274,6 +434,8 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq1(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 1 ');
                   //Eqution1
+                  _showInterstitialAd();
+
 
                   Navigator.push(
                     context,
@@ -326,6 +488,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq2(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
                   print('ggg');
+                  _showInterstitialAd();
 
                   Navigator.push(
                     context,
@@ -375,6 +538,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        SizedBox(height: 10,) ,
+        _getAdWidget(),
 
       ]),
     );

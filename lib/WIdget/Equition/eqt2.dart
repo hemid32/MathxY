@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Serves/Ads.dart';
+import 'package:mathxy/api/ads.dart';
 import 'package:mathxy/thems.dart';
 
 
@@ -49,12 +51,99 @@ class _PgcdState1 extends State<Equation2> {
 
   }
 
+  BannerAd _anchoredAdaptiveAd;
+  bool _isLoaded = false;
+  Orientation _currentOrientation;
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _currentOrientation = MediaQuery.of(context).orientation;
+    _loadAd();
+  }
+
+
+
+
+  /// Load another ad, disposing of the current ad if there is one.
+  Future<void> _loadAd() async {
+    await _anchoredAdaptiveAd?.dispose();
+    setState(() {
+      _anchoredAdaptiveAd = null;
+      _isLoaded = false;
+    });
+
+    final AnchoredAdaptiveBannerAdSize size =
+    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        MediaQuery.of(context).size.width.truncate());
+
+    if (size == null) {
+      print('Unable to get height of anchored banner.');
+      return;
+    }
+
+    _anchoredAdaptiveAd = BannerAd(
+      adUnitId: Ads.banner,
+      size: size,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$ad loaded: ${ad.responseInfo}');
+          setState(() {
+            // When the ad is loaded, get the ad size and use it to set
+            // the height of the ad container.
+            _anchoredAdaptiveAd = ad as BannerAd;
+            _isLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    );
+    return _anchoredAdaptiveAd.load();
+  }
+
+
+
+  /// Gets a widget containing the ad, if one is loaded.
+  ///
+  /// Returns an empty container if no ad is loaded, or the orientation
+  /// has changed. Also loads a new ad if the orientation changes.
+  Widget _getAdWidget() {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        if (_currentOrientation == orientation &&
+            _anchoredAdaptiveAd != null &&
+            _isLoaded) {
+          return Container(
+            //color: Colors.green,
+            width: _anchoredAdaptiveAd.size.width.toDouble(),
+            height: _anchoredAdaptiveAd.size.height.toDouble(),
+            child: AdWidget(ad: _anchoredAdaptiveAd),
+          );
+        }
+        // Reload the ad if the orientation changes.
+        if (_currentOrientation != orientation) {
+          _currentOrientation = orientation;
+          _loadAd();
+        }
+        return Container();
+      },
+    );
+  }
+
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     a.dispose();
     b.dispose();
     c.dispose();
+    _anchoredAdaptiveAd?.dispose();
+
     super.dispose();
   }
 
@@ -110,7 +199,7 @@ class _PgcdState1 extends State<Equation2> {
                     borderRadius: TeXViewBorderRadius.all(0),
                     border: TeXViewBorder.all(TeXViewBorderDecoration(
                         borderColor: Colors.indigo,
-                        borderStyle: TeXViewBorderStyle.Solid,
+                        borderStyle: TeXViewBorderStyle.solid ,
                         borderWidth: 2)),
                     backgroundColor: Colors.black,
                   ),
@@ -125,6 +214,7 @@ class _PgcdState1 extends State<Equation2> {
     //padding: EdgeInsets.only(left:50),
             )
         ),
+        _getAdWidget(),
         Center(
           child: Container(
 
@@ -326,7 +416,7 @@ class _PgcdState1 extends State<Equation2> {
                             borderRadius: TeXViewBorderRadius.all(25),
                             border: TeXViewBorder.all(TeXViewBorderDecoration(
                                 borderColor: Colors.deepOrangeAccent,
-                                borderStyle: TeXViewBorderStyle.Solid,
+                                borderStyle: TeXViewBorderStyle.solid,
                                 borderWidth: 2)),
                             backgroundColor: Colors.black,
                           ),
@@ -345,7 +435,7 @@ class _PgcdState1 extends State<Equation2> {
                             borderRadius: TeXViewBorderRadius.all(25),
                             border: TeXViewBorder.all(TeXViewBorderDecoration(
                                 borderColor: Colors.blue,
-                                borderStyle: TeXViewBorderStyle.Solid,
+                                borderStyle: TeXViewBorderStyle.solid,
                                 borderWidth: 5)),
                             backgroundColor: Colors.black,
                           ),

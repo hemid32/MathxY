@@ -1,9 +1,12 @@
 
-import 'package:firebase_admob/firebase_admob.dart';
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_tex/flutter_tex.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Serves/Ads.dart';
+import 'package:mathxy/api/ads.dart';
 import 'package:mathxy/api/serviceapi.dart';
 import 'package:mathxy/thems.dart';
 
@@ -13,9 +16,7 @@ import 'package:mathxy/thems.dart';
 class Calculator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: KeyboardDemo(),
-    );
+    return KeyboardDemo() ;
   }
 }
 
@@ -27,13 +28,115 @@ class KeyboardDemo extends StatefulWidget {
 
 class _KeyboardDemoState extends State<KeyboardDemo> {
 
-  InterstitialAd _interstitialAd;
   final adm =  ManageAds() ;
 
   bool rslt = false ;
 
+  BannerAd _bannerAd;
+  bool _bannerAdIsLoaded = false;
+
+
   TextEditingController _controller = TextEditingController();
   bool _readOnly = true;
+
+
+  InterstitialAd _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId:Ads.instit,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < 5) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd.show();
+    _interstitialAd = null;
+  }
+
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loadBanner() ;
+
+
+  }
+
+  loadBanner()async {
+    final AnchoredAdaptiveBannerAdSize size =
+    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        MediaQuery.of(context).size.width.truncate()) ;
+    _bannerAd = BannerAd(
+        size: size,
+        adUnitId: Ads.banner,
+        listener: BannerAdListener(
+          onAdLoaded: (Ad ad) {
+            print('$BannerAd loaded.');
+            setState(() {
+              _bannerAdIsLoaded = true;
+            });
+          },
+          onAdFailedToLoad: (Ad ad, LoadAdError error) {
+            print('$BannerAd failedToLoad: $error');
+            ad.dispose();
+          },
+          onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
+          onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
+        ),
+        request: AdRequest())
+      ..load();
+
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _createInterstitialAd()  ;
+
+
+  }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,127 +146,140 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
       appBar: AppBar(
         backgroundColor: Colors.limeAccent,
         title: Center(child: Text('حساب التكامل' , style:  txtStyleAppBar)),
+        leading: InkWell(
+            onTap: ()=> Navigator.pop(context),
+            child: Icon(Icons.arrow_back_ios , color: Colors.black,)),
 
       ),
-      body: ListView(
-        children: [
-          SizedBox(height: 50),
-          Center(child: Text('ملاحظة يجب توفر اتصال ب الانترنت')) ,
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: ListView(
+          children: [
+            SizedBox(height: 50),
+            Center(child: Text('ملاحظة يجب توفر اتصال ب الانترنت')) ,
 
-          Row(
-            children: [
+            Row(
+              children: [
 
-              SizedBox(
-                width: 10,
-              ),
-
-              Expanded(
-                child: TeXView(
-
-                    child: TeXViewColumn(children: [
-                      TeXViewDocument(
-                        '<h1> \\(' + '\\int	' + '\\)</h1>',
+                SizedBox(
+                  width: 10,
+                ),
 
 
-                      )
-                    ])),
-              ),
-
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(3),
+                Expanded(
+                  child: SizedBox(
+                    //width: 300,
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      style: TextStyle(fontSize: 24),
+                      autofocus: true,
+                      showCursor: true,
+                      readOnly: _readOnly,
                     ),
                   ),
-                  style: TextStyle(fontSize: 24),
-                  autofocus: true,
-                  showCursor: true,
-                  readOnly: _readOnly,
                 ),
-              ),
+                SizedBox(
+                  width: 50,
+                  child: TeXView(
 
-            ],
-          ),
-          IconButton(
-            icon: Icon(Icons.keyboard),
-            onPressed: () {
-              setState(() {
-                _readOnly = !_readOnly;
-              });
-            },
-          ),
-          //Spacer(),
-
-          rslt ? Padding(
-            padding: const EdgeInsets.only(top: 20 , bottom: 20),
-            child: Card(
-              child: FutureBuilder(
-                  future:  WolframApi.plotAFunction(expression: _controller.text , type: 'integrate+'),
-
-                  builder: (cxt , snapshot){
-
-                    print('data === ${snapshot.data}');
+                      child: TeXViewColumn(children: [
+                        TeXViewDocument(
+                          '<h1> \\(' + '\\int	' + '\\)</h1>',
 
 
-                    if(snapshot.hasData) {
+                        )
+                      ])),
+                ),
+
+
+              ],
+            ),
+
+            if(_bannerAd != null && _bannerAdIsLoaded == true  )
+              Container( width:  _bannerAd.size.width.toDouble() , height: _bannerAd.size.height.toDouble(), child: AdWidget( ad: _bannerAd)) ,
+            IconButton(
+              icon: Icon(Icons.keyboard),
+              onPressed: () {
+                setState(() {
+                  _readOnly = !_readOnly;
+                });
+              },
+            ),
+            //Spacer(),
+
+            rslt ? Padding(
+              padding: const EdgeInsets.only(top: 20 , bottom: 20),
+              child: Card(
+                child: FutureBuilder(
+                    future:  WolframApi.plotAFunction(expression: _controller.text , type: 'integrate+'),
+
+                    builder: (cxt , snapshot){
+
                       print('data === ${snapshot.data}');
 
-                      return Container(
-                        child: Image.network(snapshot.data),
 
-                      );
-                    }else{
-                      return Center(child: CircularProgressIndicator()) ;
+                      if(snapshot.hasData) {
+                        print('data === ${snapshot.data}');
+
+                        return Container(
+                          child: Image.network(snapshot.data),
+
+                        );
+                      }else{
+                        return Center(child: CircularProgressIndicator()) ;
+                      }
                     }
-                  }
 
 
 
-              ),
-            ),
-          ): Container(),
-          //Spacer(),
-
-          CustomKeyboard(
-            onTextInput: (myText) {
-              _insertText(myText);
-            },
-            onBackspace: () {
-              _backspace();
-            },
-          ),
-          Container(
-            //width: MediaQuery.of(context).size.width*0.01,
-            margin: EdgeInsets.only(
-                top: 20, bottom: 20, left: 20, right: 20),
-            child: Material(
-              elevation: 5.0,
-              borderRadius: BorderRadius.circular(20.0),
-              //color: Color(0xff01A0C7),
-              color: Colors.indigo,
-              child: MaterialButton(
-                minWidth: MediaQuery.of(context).size.width * 0.5,
-                padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-                onPressed: () async {
-                  _interstitialAd = adm.createInterstitialAd()..load() ;
-                  _interstitialAd?.show();
-                  setState(() {
-                    rslt = true ;
-                  });
-                },
-                child: Text(
-                    "احسب",
-                    textAlign: TextAlign.center,
-                    style:txtStyle
                 ),
               ),
-            ),
-          )
+            ): Container(),
+            //Spacer(),
 
-        ],
+            CustomKeyboard(
+              onTextInput: (myText) {
+                _insertText(myText);
+              },
+              onBackspace: () {
+                _backspace();
+              },
+            ),
+            Container(
+              //width: MediaQuery.of(context).size.width*0.01,
+              margin: EdgeInsets.only(
+                  top: 20, bottom: 20, left: 20, right: 20),
+              child: Material(
+                elevation: 5.0,
+                borderRadius: BorderRadius.circular(20.0),
+                //color: Color(0xff01A0C7),
+                color: Colors.indigo,
+                child: MaterialButton(
+                  minWidth: MediaQuery.of(context).size.width * 0.5,
+                  padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                  onPressed: () async {
+                    _showInterstitialAd();
+
+                    setState(() {
+                      rslt = true ;
+                    });
+                  },
+                  child: Text(
+                      "احسب",
+                      textAlign: TextAlign.center,
+                      style:txtStyle
+                  ),
+                ),
+              ),
+            )
+
+          ],
+        ),
       ),
     );
   }
@@ -233,6 +349,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   @override
   void dispose() {
     _controller.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 }

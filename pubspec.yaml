@@ -73,6 +73,7 @@ dependencies:
   webview_flutter:
   flutter_localizations :
     sdk:  flutter
+  google_mobile_ads: ^2.0.1
 
 
 dev_dependencies:

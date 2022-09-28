@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mathxy/WIdget/Home/Homes2.dart';
@@ -28,9 +30,10 @@ class _GotoHomesPagesState extends State<GotoHomesPages> {
   Future<void> shar() async {
     await FlutterShare.share(
         title: 'حل معادلات',
-        text: 'حل مشاكل الرياضيات',
-        linkUrl:
-            'https://play.google.com/store/apps/details?id=dz.hemidi.mathxy',
+        text: 'حل معادلات الرياضيات',
+
+        linkUrl: Platform.isAndroid ?
+            'https://play.google.com/store/apps/details?id=dz.hemidi.mathxy' : "",
         chooserTitle: 'مشاركة التطبيق');
   }
 
@@ -84,7 +87,7 @@ class _GotoHomesPagesState extends State<GotoHomesPages> {
             child: Image.asset('issues/images/panner.png'),
           ),
           HomePage(),
-          ],
+           ],
       ),
     );
   }
