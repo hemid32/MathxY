@@ -33,7 +33,7 @@ class _GotoHomesPagesState extends State<GotoHomesPages> {
         text: 'حل معادلات الرياضيات',
 
         linkUrl: Platform.isAndroid ?
-            'https://play.google.com/store/apps/details?id=dz.hemidi.mathxy' : "",
+            'https://play.google.com/store/apps/details?id=dz.hemidi.mathxy' : "https://apps.apple.com/cn/app/id6443591017",
         chooserTitle: 'مشاركة التطبيق');
   }
 

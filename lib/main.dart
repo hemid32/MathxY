@@ -20,7 +20,7 @@ void main() async{
 
 
       runApp(MaterialApp(
-
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
