@@ -17,6 +17,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		93D7C01428E9D0CB00B3AD1D /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +48,19 @@
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		8F7F9D643FB0A8AC35D55449 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		93D7BFDF28E9D0C900B3AD1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93D7BFEA28E9D0CA00B3AD1D /* RunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerApp.swift; sourceTree = "<group>"; };
+		93D7BFEC28E9D0CA00B3AD1D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		93D7BFEE28E9D0CA00B3AD1D /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		93D7BFF028E9D0CA00B3AD1D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
+		93D7BFF228E9D0CA00B3AD1D /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
+		93D7BFF428E9D0CB00B3AD1D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93D7BFF728E9D0CB00B3AD1D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		93D7BFF928E9D0CB00B3AD1D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93D7BFFA28E9D0CB00B3AD1D /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		93D7C00328E9D0CB00B3AD1D /* ____________________Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "____________________Tests.swift"; sourceTree = "<group>"; };
+		93D7C00D28E9D0CB00B3AD1D /* ____________________UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "____________________UITests.swift"; sourceTree = "<group>"; };
+		93D7C00F28E9D0CB00B3AD1D /* ____________________UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "____________________UITestsLaunchTests.swift"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +92,55 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		93D7BFDE28E9D0C800B3AD1D /* حل معادلات الرياضيات */ = {
+			isa = PBXGroup;
+			children = (
+				93D7BFDF28E9D0C900B3AD1D /* Assets.xcassets */,
+			);
+			path = "حل معادلات الرياضيات";
+			sourceTree = "<group>";
+		};
+		93D7BFE928E9D0CA00B3AD1D /* حل معادلات الرياضيات WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				93D7BFEA28E9D0CA00B3AD1D /* RunnerApp.swift */,
+				93D7BFEC28E9D0CA00B3AD1D /* ContentView.swift */,
+				93D7BFEE28E9D0CA00B3AD1D /* NotificationController.swift */,
+				93D7BFF028E9D0CA00B3AD1D /* NotificationView.swift */,
+				93D7BFF228E9D0CA00B3AD1D /* ComplicationController.swift */,
+				93D7BFF428E9D0CB00B3AD1D /* Assets.xcassets */,
+				93D7BFF928E9D0CB00B3AD1D /* Info.plist */,
+				93D7BFFA28E9D0CB00B3AD1D /* PushNotificationPayload.apns */,
+				93D7BFF628E9D0CB00B3AD1D /* Preview Content */,
+			);
+			path = "حل معادلات الرياضيات WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		93D7BFF628E9D0CB00B3AD1D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				93D7BFF728E9D0CB00B3AD1D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		93D7C00228E9D0CB00B3AD1D /* حل معادلات الرياضياتTests */ = {
+			isa = PBXGroup;
+			children = (
+				93D7C00328E9D0CB00B3AD1D /* ____________________Tests.swift */,
+			);
+			path = "حل معادلات الرياضياتTests";
+			sourceTree = "<group>";
+		};
+		93D7C00C28E9D0CB00B3AD1D /* حل معادلات الرياضياتUITests */ = {
+			isa = PBXGroup;
+			children = (
+				93D7C00D28E9D0CB00B3AD1D /* ____________________UITests.swift */,
+				93D7C00F28E9D0CB00B3AD1D /* ____________________UITestsLaunchTests.swift */,
+			);
+			path = "حل معادلات الرياضياتUITests";
+			sourceTree = "<group>";
+		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +157,10 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
+				93D7BFDE28E9D0C800B3AD1D /* حل معادلات الرياضيات */,
+				93D7BFE928E9D0CA00B3AD1D /* حل معادلات الرياضيات WatchKit Extension */,
+				93D7C00228E9D0CB00B3AD1D /* حل معادلات الرياضياتTests */,
+				93D7C00C28E9D0CB00B3AD1D /* حل معادلات الرياضياتUITests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				D11C3D248DFBF4806D12D51A /* Pods */,
 				45A267483B1065FD0CC8DB71 /* Frameworks */,
@@ -139,6 +215,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				150E0CB05306BF23EF8BED92 /* [CP] Embed Pods Frameworks */,
+				93D7C01428E9D0CB00B3AD1D /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -155,6 +232,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
@@ -354,7 +432,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 7P5G3893WM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -362,7 +440,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.7;
+				MARKETING_VERSION = 1.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = dz.hemidi.mathxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -484,7 +562,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 7P5G3893WM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -492,7 +570,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.7;
+				MARKETING_VERSION = 1.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = dz.hemidi.mathxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -510,7 +588,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 7P5G3893WM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -518,7 +596,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.7;
+				MARKETING_VERSION = 1.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = dz.hemidi.mathxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = mathxy;

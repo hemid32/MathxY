@@ -57,7 +57,7 @@ dependencies:
   store_redirect: ^1.0.2
   #google_fonts_arabic: ^1.1.7
   #rflutter_alert: ^1.1.0  #delet apre
-  flutter_share: ^1.0.3
+  flutter_share: ^2.0.0
   #provider: ^4.3.2+2
   #awesome_dialog: ^1.2.1
   #slide_countdown_clock: ^1.0.3

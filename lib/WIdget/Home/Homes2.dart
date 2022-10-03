@@ -169,8 +169,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _createInterstitialAd();
-    _loadAd() ;
+    //_createInterstitialAd();
+    //_loadAd() ;
 
   }
 
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Pgcd(true);
                   //Provider.of<MyProvider>(context, listen: false)
                   //    .GetStringAppAbar('حساب PGCD');
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
 
                   Navigator.push(
                     context,
@@ -321,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq1(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 1 ');
                   //Eqution1
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
 
                   Navigator.push(
                     context,
@@ -369,7 +369,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq2(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
 
                   Navigator.push(
                     context,
@@ -434,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq1(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 1 ');
                   //Eqution1
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
 
 
                   Navigator.push(
@@ -488,7 +488,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq2(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
                   print('ggg');
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
 
                   Navigator.push(
                     context,
