@@ -142,7 +142,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     _controller.dispose();
     super.dispose();
     _anchoredAdaptiveAd?.dispose();
-    _interstitialAd?.dispose();
+    //_interstitialAd?.dispose();
 
   }
 
@@ -178,7 +178,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _createInterstitialAd();
+    //_createInterstitialAd();
   }
   @override
   Widget build(BuildContext context) {
@@ -300,7 +300,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 minWidth: MediaQuery.of(context).size.width * 0.5,
                 padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                 onPressed: () async {
-                  _showInterstitialAd();
+                  //_showInterstitialAd();
                   setState(() {
                     rslt = true ;
                   });

@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
-import GoogleMobileAds  /// add this line
+///import GoogleMobileAds  /// add this line
+import GoogleMobileAds
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,8 +10,10 @@ import GoogleMobileAds  /// add this line
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+
     ///GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ kGADSimulatorID ]. /// added this line
-    GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID ]
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

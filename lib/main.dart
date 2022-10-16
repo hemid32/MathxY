@@ -1,3 +1,4 @@
+import 'package:facebook_audience_network/facebook_audience_network.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Screen/home_page.dart';
@@ -16,6 +17,10 @@ void main() async{
   MobileAds.instance.initialize();
 
 
+  FacebookAudienceNetwork.init(
+      //testingId: "37b1da9d-b48c-4103-a393-2e095e734bd6", //optional
+      iOSAdvertiserTrackingEnabled: true //default false
+  );
 
 
 

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:facebook_audience_network/ad/ad_banner.dart';
+import 'package:facebook_audience_network/ad/ad_interstitial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -22,160 +24,112 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  BannerAd _anchoredAdaptiveAd;
-  bool _isLoaded = false;
-   Orientation _currentOrientation;
   ////////////
 
-  InterstitialAd _interstitialAd;
-  int _numInterstitialLoadAttempts = 0;
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId:Ads.instit,
-        request: AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-            _interstitialAd.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            if (_numInterstitialLoadAttempts < 5) {
-              _createInterstitialAd();
-            }
-          },
-        ));
-  }
-
-  void _showInterstitialAd() {
-    if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-    );
-    _interstitialAd.show();
-    _interstitialAd = null;
-  }
-
-
-
-   ////////////
-
-
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _currentOrientation = MediaQuery.of(context).orientation;
-    _loadAd();
-  }
-
-
-
-
-  /// Load another ad, disposing of the current ad if there is one.
-  Future<void> _loadAd() async {
-    await _anchoredAdaptiveAd?.dispose();
-    setState(() {
-      _anchoredAdaptiveAd = null;
-      _isLoaded = false;
-    });
-
+  BannerAd _anchoredBanner;
+  bool _loadingAnchoredBanner = false;
+  Future<void> _createAnchoredBanner(BuildContext context) async {
+    print(Ads.banner) ;
     final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        MediaQuery.of(context).size.width.truncate());
+    await AdSize.getAnchoredAdaptiveBannerAdSize(
+      Orientation.portrait,
+      MediaQuery.of(context).size.width.truncate(),
+    );
 
     if (size == null) {
       print('Unable to get height of anchored banner.');
       return;
     }
 
-    _anchoredAdaptiveAd = BannerAd(
-      adUnitId: Ads.banner,
-      size: size,
+    final BannerAd banner = BannerAd(
+      size: AdSize.mediumRectangle,
       request: AdRequest(),
+      adUnitId:
+      Ads.banner, //'ca-app-pub-1803778669602445/6884931764',
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
-          print('$ad loaded: ${ad.responseInfo}');
+          print('$BannerAd loaded.');
           setState(() {
-            // When the ad is loaded, get the ad size and use it to set
-            // the height of the ad container.
-            _anchoredAdaptiveAd = ad as BannerAd;
-            _isLoaded = true;
+            _anchoredBanner = ad as BannerAd;
           });
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Anchored adaptive banner failedToLoad: $error');
+          print('$BannerAd failedToLoad: $error');
           ad.dispose();
         },
+        onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
+        onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
       ),
     );
-    return _anchoredAdaptiveAd.load();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _anchoredAdaptiveAd?.dispose();
-    _interstitialAd?.dispose();
-
+    return banner.load();
   }
 
 
-  /// Gets a widget containing the ad, if one is loaded.
-  ///
-  /// Returns an empty container if no ad is loaded, or the orientation
-  /// has changed. Also loads a new ad if the orientation changes.
-  Widget _getAdWidget() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (_currentOrientation == orientation &&
-            _anchoredAdaptiveAd != null &&
-            _isLoaded) {
-          return Container(
-            //color: Colors.green,
-            width: _anchoredAdaptiveAd.size.width.toDouble(),
-            height: _anchoredAdaptiveAd.size.height.toDouble(),
-            child: AdWidget(ad: _anchoredAdaptiveAd),
-          );
+
+   ////////////
+
+  bool _isInterstitialAdLoaded = false;
+
+
+  void _loadInterstitialAd() {
+    FacebookInterstitialAd.loadInterstitialAd(
+      // placementId: "YOUR_PLACEMENT_ID",
+      placementId: AdsFacebook.instit,
+      listener: (result, value) {
+        print(">> FAN > Interstitial Ad: $result --> $value");
+        if (result == InterstitialAdResult.LOADED)
+          _isInterstitialAdLoaded = true;
+
+        /// Once an Interstitial Ad has been dismissed and becomes invalidated,
+        /// load a fresh Ad by calling this function.
+        if (result == InterstitialAdResult.DISMISSED &&
+            value["invalidated"] == true) {
+          _isInterstitialAdLoaded = false;
+          _loadInterstitialAd();
         }
-        // Reload the ad if the orientation changes.
-        if (_currentOrientation != orientation) {
-          _currentOrientation = orientation;
-          _loadAd();
-        }
-        return Container();
       },
     );
   }
 
+
+
+
+
+
   @override
-  void initState() {
-    super.initState();
-    //_createInterstitialAd();
-    //_loadAd() ;
+  void dispose() {
+    super.dispose();
+    //_anchoredBanner?.dispose();
 
   }
 
+
+
+  @override
+  void initState() {
+    _loadInterstitialAd() ;
+    super.initState();
+
+  }
+
+  _showInterstitialAd() {
+    if (_isInterstitialAdLoaded == true)
+      FacebookInterstitialAd.showInterstitialAd();
+    else
+      print("Interstial Ad not yet loaded!");
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    /*
+    if (!_loadingAnchoredBanner) {
+      _loadingAnchoredBanner = true;
+      _createAnchoredBanner(context);
+    }
+
+     */
+
     return WillPopScope(
       onWillPop: () async {
         //print('exiiiiiiiiiiiiiiit');
@@ -196,10 +150,10 @@ class _HomePageState extends State<HomePage> {
               height: 80.0,
               child: GestureDetector(
                 onTap: () {
-                  _showInterstitialAd();
                   //Provider.of<MyProvider>(context, listen: false).GetFunctionDesign(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('رسم دالة ');
                   //DesignFunction
+                  _showInterstitialAd() ;
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => DesignFunction()),
@@ -259,6 +213,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false)
                   //    .GetStringAppAbar('حساب PGCD');
                   //_showInterstitialAd();
+                  _showInterstitialAd() ;
 
                   Navigator.push(
                     context,
@@ -322,6 +277,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 1 ');
                   //Eqution1
                   //_showInterstitialAd();
+                  _showInterstitialAd() ;
 
                   Navigator.push(
                     context,
@@ -370,6 +326,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).get_Eq2(true);
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
                   //_showInterstitialAd();
+                  _showInterstitialAd() ;
 
                   Navigator.push(
                     context,
@@ -436,6 +393,7 @@ class _HomePageState extends State<HomePage> {
                   //Eqution1
                   //_showInterstitialAd();
 
+                  _showInterstitialAd() ;
 
                   Navigator.push(
                     context,
@@ -489,6 +447,7 @@ class _HomePageState extends State<HomePage> {
                   //Provider.of<MyProvider>(context, listen: false).GetStringAppAbar('حل معادلات من درجة 2 ');
                   print('ggg');
                   //_showInterstitialAd();
+                  _showInterstitialAd() ;
 
                   Navigator.push(
                     context,
@@ -539,7 +498,29 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         SizedBox(height: 10,) ,
-        _getAdWidget(),
+        Container(
+          alignment: Alignment(0.5, 1),
+          child: FacebookBannerAd(
+            placementId: AdsFacebook.banner,
+            bannerSize: BannerSize.MEDIUM_RECTANGLE,
+            listener: (result, value) {
+              switch (result) {
+                case BannerAdResult.ERROR:
+                  print("Error: $value");
+                  break;
+                case BannerAdResult.LOADED:
+                  print("Loaded: $value");
+                  break;
+                case BannerAdResult.CLICKED:
+                  print("Clicked: $value");
+                  break;
+                case BannerAdResult.LOGGING_IMPRESSION:
+                  print("Logging Impression: $value");
+                  break;
+              }
+            },
+          ),
+        )
 
       ]),
     );
