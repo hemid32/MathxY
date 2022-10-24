@@ -11,7 +11,8 @@ import GoogleMobileAds
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+    GADMobileAds.sharedInstance().start(completionHandler: nil)
+	GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID ]
 
     ///GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ kGADSimulatorID ]. /// added this line
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

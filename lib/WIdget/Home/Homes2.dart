@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:math';
 
+import 'package:applovin_max/applovin_max.dart';
 import 'package:facebook_audience_network/ad/ad_banner.dart';
 import 'package:facebook_audience_network/ad/ad_interstitial.dart';
 import 'package:flutter/material.dart';
@@ -26,70 +28,72 @@ class _HomePageState extends State<HomePage> {
 
   ////////////
 
-  BannerAd _anchoredBanner;
-  bool _loadingAnchoredBanner = false;
-  Future<void> _createAnchoredBanner(BuildContext context) async {
-    print(Ads.banner) ;
-    final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getAnchoredAdaptiveBannerAdSize(
-      Orientation.portrait,
-      MediaQuery.of(context).size.width.truncate(),
-    );
+  var _interstitialRetryAttempt = 0;
 
-    if (size == null) {
-      print('Unable to get height of anchored banner.');
-      return;
+  void initializeInterstitialAds() {
+
+    AppLovinMAX.setInterstitialListener(InterstitialListener(
+      onAdLoadedCallback: (ad) {
+        // Interstitial ad is ready to be shown. AppLovinMAX.isInterstitialReady(_interstitial_ad_unit_id) will now return 'true'
+        print('Interstitial ad loaded from ' + ad.networkName);
+
+        // Reset retry attempt
+        _interstitialRetryAttempt = 0;
+      },
+      onAdLoadFailedCallback: (adUnitId, error) {
+        // Interstitial ad failed to load
+        // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
+        _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
+
+        int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
+
+        print('Interstitial ad failed to load with code ' + error.code.toString() + ' - retrying in ' + retryDelay.toString() + 's');
+
+        Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
+          AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
+        });
+      },
+      onAdDisplayedCallback: (ad) {
+
+      },
+      onAdDisplayFailedCallback: (ad, error) {
+       print('error : $error') ;
+      },
+      onAdClickedCallback: (ad) {
+
+      },
+      onAdHiddenCallback: (ad) {
+
+      },
+    ));
+
+    // Load the first interstitial
+    AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
+  }
+  Future<void>_showInterstitialAd()async  {
+    bool isReady = (await AppLovinMAX.isInterstitialReady(AdsAppLovine.inistat_ad_unit_id));
+    if (isReady) {
+      AppLovinMAX.showInterstitial(AdsAppLovine.inistat_ad_unit_id);
+    }else {
+      initializeInterstitialAds() ;
     }
 
-    final BannerAd banner = BannerAd(
-      size: AdSize.mediumRectangle,
-      request: AdRequest(),
-      adUnitId:
-      Ads.banner, //'ca-app-pub-1803778669602445/6884931764',
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          print('$BannerAd loaded.');
-          setState(() {
-            _anchoredBanner = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('$BannerAd failedToLoad: $error');
-          ad.dispose();
-        },
-        onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
-        onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
-      ),
-    );
-    return banner.load();
+  }
+  initializeBannerAds()
+  {
+    // Banners are automatically sized to 320x50 on phones and 728x90 on tablets
+    AppLovinMAX.createBanner(AdsAppLovine.banner_ad_unit_id, AdViewPosition.bottomCenter);
+    AppLovinMAX.setBannerBackgroundColor(AdsAppLovine.banner_ad_unit_id, "0xFFFFFF");
+    // For example, to set a white background, set the background color to 0xFFFFFF.
+
+
   }
 
 
-
-   ////////////
-
-  bool _isInterstitialAdLoaded = false;
+  ////////////
 
 
-  void _loadInterstitialAd() {
-    FacebookInterstitialAd.loadInterstitialAd(
-      // placementId: "YOUR_PLACEMENT_ID",
-      placementId: AdsFacebook.instit,
-      listener: (result, value) {
-        print(">> FAN > Interstitial Ad: $result --> $value");
-        if (result == InterstitialAdResult.LOADED)
-          _isInterstitialAdLoaded = true;
 
-        /// Once an Interstitial Ad has been dismissed and becomes invalidated,
-        /// load a fresh Ad by calling this function.
-        if (result == InterstitialAdResult.DISMISSED &&
-            value["invalidated"] == true) {
-          _isInterstitialAdLoaded = false;
-          _loadInterstitialAd();
-        }
-      },
-    );
-  }
 
 
 
@@ -107,17 +111,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _loadInterstitialAd() ;
+    initializeInterstitialAds() ;
+    initializeBannerAds() ;
+    AppLovinMAX.showBanner(AdsAppLovine.banner_ad_unit_id);
     super.initState();
 
   }
 
-  _showInterstitialAd() {
-    if (_isInterstitialAdLoaded == true)
-      FacebookInterstitialAd.showInterstitialAd();
-    else
-      print("Interstial Ad not yet loaded!");
-  }
 
 
   @override
@@ -129,6 +129,7 @@ class _HomePageState extends State<HomePage> {
     }
 
      */
+
 
     return WillPopScope(
       onWillPop: () async {
@@ -498,6 +499,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         SizedBox(height: 10,) ,
+        /*
         Container(
           alignment: Alignment(0.5, 1),
           child: FacebookBannerAd(
@@ -520,7 +522,12 @@ class _HomePageState extends State<HomePage> {
               }
             },
           ),
-        )
+        ) ,
+
+         */
+
+
+
 
       ]),
     );

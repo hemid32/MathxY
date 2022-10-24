@@ -1,4 +1,7 @@
 
+import 'dart:math';
+
+import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -30,6 +33,56 @@ class _PgcdState1 extends State<Eqution1> {
   // *** ads
 
   // *** ads
+  var _interstitialRetryAttempt = 0;
+
+  void initializeInterstitialAds() {
+
+    AppLovinMAX.setInterstitialListener(InterstitialListener(
+      onAdLoadedCallback: (ad) {
+        // Interstitial ad is ready to be shown. AppLovinMAX.isInterstitialReady(_interstitial_ad_unit_id) will now return 'true'
+        print('Interstitial ad loaded from ' + ad.networkName);
+
+        // Reset retry attempt
+        _interstitialRetryAttempt = 0;
+      },
+      onAdLoadFailedCallback: (adUnitId, error) {
+        // Interstitial ad failed to load
+        // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
+        _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
+
+        int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
+
+        print('Interstitial ad failed to load with code ' + error.code.toString() + ' - retrying in ' + retryDelay.toString() + 's');
+
+        Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
+          AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
+        });
+      },
+      onAdDisplayedCallback: (ad) {
+
+      },
+      onAdDisplayFailedCallback: (ad, error) {
+
+      },
+      onAdClickedCallback: (ad) {
+
+      },
+      onAdHiddenCallback: (ad) {
+
+      },
+    ));
+
+    // Load the first interstitial
+    AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
+  }
+  Future<void>_showInterstitialAd()async  {
+    print('dfddf') ;
+    bool isReady = (await AppLovinMAX.isInterstitialReady(AdsAppLovine.inistat_ad_unit_id));
+    if (isReady) {
+      AppLovinMAX.showInterstitial(AdsAppLovine.inistat_ad_unit_id);
+    }
+
+  }
 
 
 
@@ -54,90 +107,18 @@ class _PgcdState1 extends State<Eqution1> {
 
   }
 
-  BannerAd _anchoredAdaptiveAd;
-  bool _isLoaded = false;
-  Orientation _currentOrientation;
 
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _currentOrientation = MediaQuery.of(context).orientation;
-    _loadAd();
+    //_currentOrientation = MediaQuery.of(context).orientation;
+    //_loadAd();
   }
 
 
 
 
-  /// Load another ad, disposing of the current ad if there is one.
-  Future<void> _loadAd() async {
-    await _anchoredAdaptiveAd?.dispose();
-    setState(() {
-      _anchoredAdaptiveAd = null;
-      _isLoaded = false;
-    });
-
-    final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        MediaQuery.of(context).size.width.truncate());
-
-    if (size == null) {
-      print('Unable to get height of anchored banner.');
-      return;
-    }
-
-    _anchoredAdaptiveAd = BannerAd(
-      adUnitId: Ads.banner,
-      size: size,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          print('$ad loaded: ${ad.responseInfo}');
-          setState(() {
-            // When the ad is loaded, get the ad size and use it to set
-            // the height of the ad container.
-            _anchoredAdaptiveAd = ad as BannerAd;
-            _isLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Anchored adaptive banner failedToLoad: $error');
-          ad.dispose();
-        },
-      ),
-    );
-    return _anchoredAdaptiveAd.load();
-  }
-
-
-
-
-  /// Gets a widget containing the ad, if one is loaded.
-  ///
-  /// Returns an empty container if no ad is loaded, or the orientation
-  /// has changed. Also loads a new ad if the orientation changes.
-  Widget _getAdWidget() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (_currentOrientation == orientation &&
-            _anchoredAdaptiveAd != null &&
-            _isLoaded) {
-          return Container(
-            //color: Colors.green,
-            width: _anchoredAdaptiveAd.size.width.toDouble(),
-            height: _anchoredAdaptiveAd.size.height.toDouble(),
-            child: AdWidget(ad: _anchoredAdaptiveAd),
-          );
-        }
-        // Reload the ad if the orientation changes.
-        if (_currentOrientation != orientation) {
-          _currentOrientation = orientation;
-          _loadAd();
-        }
-        return Container();
-      },
-    );
-  }
 
 
 
@@ -146,7 +127,7 @@ class _PgcdState1 extends State<Eqution1> {
     // TODO: implement dispose
     a.dispose();
     b.dispose();
-    _anchoredAdaptiveAd?.dispose();
+    //_anchoredAdaptiveAd?.dispose();
 
     super.dispose();
   }
@@ -224,7 +205,7 @@ class _PgcdState1 extends State<Eqution1> {
 
               )  ,
             ),
-        _getAdWidget(),
+        //_getAdWidget(),
         Center(
           child: Container(
 
@@ -442,6 +423,7 @@ class _PgcdState1 extends State<Eqution1> {
                     minWidth: MediaQuery.of(context).size.width * 0.5,
                     padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                     onPressed: () async {
+                      _showInterstitialAd() ;
                       setState(() {
                         method = ' ';
                       });

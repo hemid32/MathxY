@@ -1,4 +1,8 @@
 PODS:
+  - applovin_max (2.1.0):
+    - AppLovinSDK (= 11.5.1)
+    - Flutter
+  - AppLovinSDK (11.5.1)
   - facebook_audience_network (0.0.1):
     - FBAudienceNetwork (~> 6.3)
     - Flutter
@@ -62,15 +66,18 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - applovin_max (from `.symlinks/plugins/applovin_max/ios`)
   - facebook_audience_network (from `.symlinks/plugins/facebook_audience_network/ios`)
   - Flutter (from `Flutter`)
   - flutter_share (from `.symlinks/plugins/flutter_share/ios`)
+  - Google-Mobile-Ads-SDK
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
   - store_redirect (from `.symlinks/plugins/store_redirect/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
   trunk:
+    - AppLovinSDK
     - FBAudienceNetwork
     - Google-Mobile-Ads-SDK
     - GoogleAppMeasurement
@@ -80,6 +87,8 @@ SPEC REPOS:
     - PromisesObjC
 
 EXTERNAL SOURCES:
+  applovin_max:
+    :path: ".symlinks/plugins/applovin_max/ios"
   facebook_audience_network:
     :path: ".symlinks/plugins/facebook_audience_network/ios"
   Flutter:
@@ -94,6 +103,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
+  applovin_max: 8e2bbf2dd1f5af99257a469b64268cd27c45b861
+  AppLovinSDK: 40398f6ec127e01f53992b2acd663252647c0dbb
   facebook_audience_network: bb22bdda913d419d8c3247c9570bda4563302417
   FBAudienceNetwork: e0fcc9091fced34910ed0b6da06f129db46ac9e6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
@@ -108,6 +119,6 @@ SPEC CHECKSUMS:
   store_redirect: 2977747cf81689a39bd62c248c2deacb7a0d131e
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
+PODFILE CHECKSUM: 6c380575c03b609ed94931ee23ba8ac761c17e19
 
 COCOAPODS: 1.11.3

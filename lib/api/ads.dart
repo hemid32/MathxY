@@ -11,3 +11,9 @@ class AdsFacebook {
   static String instit = Platform.isAndroid ? '234368802046838_463892419094474' : '234368802046838_465472682269781' ;
   //static String native = Platform.isAndroid ? 'ca-app-pub-1803778669602445/9411421168' :  "ca-app-pub-1803778669602445/3213928764" ;
 }
+
+class AdsAppLovine{
+  static String banner_ad_unit_id = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "9377efdc0614c350";
+  static String inistat_ad_unit_id = Platform.isAndroid ? "ANDROID_BANNER_AD_UNIT_ID" : "42a361ee421fc64e";
+
+}

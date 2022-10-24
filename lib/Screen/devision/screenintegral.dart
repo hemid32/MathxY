@@ -142,7 +142,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     _controller.dispose();
     super.dispose();
     _anchoredAdaptiveAd?.dispose();
-    //_interstitialAd?.dispose();
+    _interstitialAd?.dispose();
 
   }
 
@@ -178,7 +178,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    //_createInterstitialAd();
+    _createInterstitialAd();
   }
   @override
   Widget build(BuildContext context) {

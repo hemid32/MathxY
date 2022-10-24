@@ -1,3 +1,4 @@
+import 'package:applovin_max/applovin_max.dart';
 import 'package:facebook_audience_network/facebook_audience_network.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -22,6 +23,10 @@ void main() async{
       iOSAdvertiserTrackingEnabled: true //default false
   );
 
+  Map sdkConfiguration = await AppLovinMAX.initialize('8_3osmL1Uh9dkkyrbxrXMeVlvFzs9qePQxM2B8hz3KvBskxL7tOT85OfM4aTJXbURAva1SW8iAxTyv33buEpC-');
+  //AppLovinMAX.showMediationDebugger();
+
+// SDK is initialized, start loading ads
 
 
       runApp(MaterialApp(
