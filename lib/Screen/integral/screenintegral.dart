@@ -4,9 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_tex/flutter_tex.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Serves/Ads.dart';
-import 'package:mathxy/api/ads.dart';
 import 'package:mathxy/api/serviceapi.dart';
 import 'package:mathxy/thems.dart';
 
@@ -32,7 +30,6 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   bool rslt = false ;
 
-  BannerAd _bannerAd;
   bool _bannerAdIsLoaded = false;
 
 
@@ -40,52 +37,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   bool _readOnly = true;
 
 
-  InterstitialAd _interstitialAd;
-  int _numInterstitialLoadAttempts = 0;
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId:Ads.instit,
-        request: AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-            _interstitialAd.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            if (_numInterstitialLoadAttempts < 5) {
-              _createInterstitialAd();
-            }
-          },
-        ));
-  }
 
-  void _showInterstitialAd() {
-    if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-    );
-    _interstitialAd.show();
-    _interstitialAd = null;
-  }
 
 
 
@@ -93,36 +45,10 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    loadBanner() ;
 
 
   }
 
-  loadBanner()async {
-    final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        MediaQuery.of(context).size.width.truncate()) ;
-    _bannerAd = BannerAd(
-        size: size,
-        adUnitId: Ads.banner,
-        listener: BannerAdListener(
-          onAdLoaded: (Ad ad) {
-            print('$BannerAd loaded.');
-            setState(() {
-              _bannerAdIsLoaded = true;
-            });
-          },
-          onAdFailedToLoad: (Ad ad, LoadAdError error) {
-            print('$BannerAd failedToLoad: $error');
-            ad.dispose();
-          },
-          onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
-          onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
-        ),
-        request: AdRequest())
-      ..load();
-
-  }
 
 
   @override
@@ -200,8 +126,6 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
               ],
             ),
 
-            if(_bannerAd != null && _bannerAdIsLoaded == true  )
-              Container( width:  _bannerAd.size.width.toDouble() , height: _bannerAd.size.height.toDouble(), child: AdWidget( ad: _bannerAd)) ,
             IconButton(
               icon: Icon(Icons.keyboard),
               onPressed: () {
@@ -349,7 +273,6 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   @override
   void dispose() {
     _controller.dispose();
-    _interstitialAd?.dispose();
     super.dispose();
   }
 }

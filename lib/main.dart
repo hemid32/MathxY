@@ -1,7 +1,4 @@
-import 'package:applovin_max/applovin_max.dart';
-import 'package:facebook_audience_network/facebook_audience_network.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Screen/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
@@ -15,15 +12,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
 
 
-  FacebookAudienceNetwork.init(
-      //testingId: "37b1da9d-b48c-4103-a393-2e095e734bd6", //optional
-      iOSAdvertiserTrackingEnabled: true //default false
-  );
-
-  Map sdkConfiguration = await AppLovinMAX.initialize('8_3osmL1Uh9dkkyrbxrXMeVlvFzs9qePQxM2B8hz3KvBskxL7tOT85OfM4aTJXbURAva1SW8iAxTyv33buEpC-');
   //AppLovinMAX.showMediationDebugger();
 
 // SDK is initialized, start loading ads

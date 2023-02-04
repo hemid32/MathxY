@@ -28,6 +28,33 @@ class _PgcdState1 extends State<Equation2> {
   final adm =  ManageAds() ;
 
 
+  BannerAd  _anchoredBanner;
+  bool _loadingAnchoredBanner = false;
+
+  Future<void> _createAnchoredBanner(BuildContext context) async {
+    //const AdSize size = AdSize.banner;
+    final BannerAd banner = BannerAd(
+      size: AdSize.banner,
+      request:const  AdRequest(),
+      adUnitId: Ads.banner, //'ca-app-pub-1803778669602445/6884931764',
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          debugPrint('$BannerAd loaded.');
+          setState(() {
+            _anchoredBanner = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          debugPrint('$BannerAd failedToLoad: $error');
+          ad.dispose();
+        },
+        onAdOpened: (Ad ad) => debugPrint('$BannerAd onAdOpened.'),
+        onAdClosed: (Ad ad) => debugPrint('$BannerAd onAdClosed.'),
+      ),
+    );
+    return banner.load();
+  }
+
 
 
   final a = TextEditingController();
@@ -51,89 +78,17 @@ class _PgcdState1 extends State<Equation2> {
 
   }
 
-  BannerAd _anchoredAdaptiveAd;
-  bool _isLoaded = false;
-  Orientation _currentOrientation;
 
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _currentOrientation = MediaQuery.of(context).orientation;
-    _loadAd();
   }
 
 
 
 
-  /// Load another ad, disposing of the current ad if there is one.
-  Future<void> _loadAd() async {
-    await _anchoredAdaptiveAd?.dispose();
-    setState(() {
-      _anchoredAdaptiveAd = null;
-      _isLoaded = false;
-    });
 
-    final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        MediaQuery.of(context).size.width.truncate());
-
-    if (size == null) {
-      print('Unable to get height of anchored banner.');
-      return;
-    }
-
-    _anchoredAdaptiveAd = BannerAd(
-      adUnitId: Ads.banner,
-      size: size,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          print('$ad loaded: ${ad.responseInfo}');
-          setState(() {
-            // When the ad is loaded, get the ad size and use it to set
-            // the height of the ad container.
-            _anchoredAdaptiveAd = ad as BannerAd;
-            _isLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Anchored adaptive banner failedToLoad: $error');
-          ad.dispose();
-        },
-      ),
-    );
-    return _anchoredAdaptiveAd.load();
-  }
-
-
-
-  /// Gets a widget containing the ad, if one is loaded.
-  ///
-  /// Returns an empty container if no ad is loaded, or the orientation
-  /// has changed. Also loads a new ad if the orientation changes.
-  Widget _getAdWidget() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (_currentOrientation == orientation &&
-            _anchoredAdaptiveAd != null &&
-            _isLoaded) {
-          return Container(
-            //color: Colors.green,
-            width: _anchoredAdaptiveAd.size.width.toDouble(),
-            height: _anchoredAdaptiveAd.size.height.toDouble(),
-            child: AdWidget(ad: _anchoredAdaptiveAd),
-          );
-        }
-        // Reload the ad if the orientation changes.
-        if (_currentOrientation != orientation) {
-          _currentOrientation = orientation;
-          _loadAd();
-        }
-        return Container();
-      },
-    );
-  }
 
 
   @override
@@ -142,7 +97,7 @@ class _PgcdState1 extends State<Equation2> {
     a.dispose();
     b.dispose();
     c.dispose();
-    _anchoredAdaptiveAd?.dispose();
+    _anchoredBanner?.dispose() ;
 
     super.dispose();
   }
@@ -151,6 +106,12 @@ class _PgcdState1 extends State<Equation2> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_loadingAnchoredBanner) {
+      _loadingAnchoredBanner = true;
+      _createAnchoredBanner(context);
+    }
+
+
     return  Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.limeAccent,
@@ -214,7 +175,6 @@ class _PgcdState1 extends State<Equation2> {
     //padding: EdgeInsets.only(left:50),
             )
         ),
-        _getAdWidget(),
         Center(
           child: Container(
 
@@ -229,6 +189,19 @@ class _PgcdState1 extends State<Equation2> {
               )),
         ),
 
+        _anchoredBanner != null
+            ? Column(
+              children: [
+                Container(
+          color: Colors.transparent,
+          width: _anchoredBanner.size.width.toDouble(),
+          height: _anchoredBanner.size.height.toDouble(),
+          child: AdWidget(ad: _anchoredBanner),
+        ),
+                SizedBox(height: 10,)
+              ],
+            )
+            : const SizedBox(),
 
 
 

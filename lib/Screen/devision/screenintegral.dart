@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_tex/flutter_tex.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Serves/Ads.dart';
 import 'package:mathxy/api/ads.dart';
 import 'package:mathxy/api/serviceapi.dart';
@@ -36,113 +35,23 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
 
 
-  BannerAd _anchoredAdaptiveAd;
-  bool _isLoaded = false;
-  Orientation _currentOrientation;
 
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _currentOrientation = MediaQuery.of(context).orientation;
-    _loadAd();
   }
 
 
-  InterstitialAd _interstitialAd;
-  int _numInterstitialLoadAttempts = 0;
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId:Ads.instit,
-        request: AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
-            _interstitialAd = ad;
-            _numInterstitialLoadAttempts = 0;
-            _interstitialAd.setImmersiveMode(true);
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
-            _numInterstitialLoadAttempts += 1;
-            _interstitialAd = null;
-            if (_numInterstitialLoadAttempts < 5) {
-              _createInterstitialAd();
-            }
-          },
-        ));
-  }
 
-  void _showInterstitialAd() {
-    if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
-      return;
-    }
-    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
-      onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
-        ad.dispose();
-        _createInterstitialAd();
-      },
-    );
-    _interstitialAd.show();
-    _interstitialAd = null;
-  }
 
 
   /// Load another ad, disposing of the current ad if there is one.
-  Future<void> _loadAd() async {
-    await _anchoredAdaptiveAd?.dispose();
-    setState(() {
-      _anchoredAdaptiveAd = null;
-      _isLoaded = false;
-    });
-
-    final AnchoredAdaptiveBannerAdSize size =
-    await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-        MediaQuery.of(context).size.width.truncate());
-
-    if (size == null) {
-      print('Unable to get height of anchored banner.');
-      return;
-    }
-
-    _anchoredAdaptiveAd = BannerAd(
-      adUnitId: Ads.banner,
-      size: size,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          print('$ad loaded: ${ad.responseInfo}');
-          setState(() {
-            // When the ad is loaded, get the ad size and use it to set
-            // the height of the ad container.
-            _anchoredAdaptiveAd = ad as BannerAd;
-            _isLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Anchored adaptive banner failedToLoad: $error');
-          ad.dispose();
-        },
-      ),
-    );
-    return _anchoredAdaptiveAd.load();
-  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-    _anchoredAdaptiveAd?.dispose();
-    _interstitialAd?.dispose();
 
   }
 
@@ -151,34 +60,11 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   ///
   /// Returns an empty container if no ad is loaded, or the orientation
   /// has changed. Also loads a new ad if the orientation changes.
-  Widget _getAdWidget() {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        if (_currentOrientation == orientation &&
-            _anchoredAdaptiveAd != null &&
-            _isLoaded) {
-          return Container(
-            //color: Colors.green,
-            width: _anchoredAdaptiveAd.size.width.toDouble(),
-            height: _anchoredAdaptiveAd.size.height.toDouble(),
-            child: AdWidget(ad: _anchoredAdaptiveAd),
-          );
-        }
-        // Reload the ad if the orientation changes.
-        if (_currentOrientation != orientation) {
-          _currentOrientation = orientation;
-          _loadAd();
-        }
-        return Container();
-      },
-    );
-  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _createInterstitialAd();
   }
   @override
   Widget build(BuildContext context) {
@@ -238,7 +124,6 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
             ],
           ),
 
-          _getAdWidget(),
           IconButton(
             icon: Icon(Icons.keyboard),
             onPressed: () {

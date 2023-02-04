@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:applovin_max/applovin_max.dart';
-import 'package:facebook_audience_network/ad/ad_banner.dart';
-import 'package:facebook_audience_network/ad/ad_interstitial.dart';
+//import 'package:facebook_audience_network/ad/ad_banner.dart';
+//import 'package:facebook_audience_network/ad/ad_interstitial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:http/http.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mathxy/Screen/devision/screenintegral.dart';
 import 'package:mathxy/Screen/integral/screenintegral.dart';
 import 'package:mathxy/WIdget/Equition/Function/FunctionDesign.dart';
@@ -28,69 +29,98 @@ class _HomePageState extends State<HomePage> {
 
   ////////////
 
-  var _interstitialRetryAttempt = 0;
+  InterstitialAd  _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  // You can also test with your own ad unit IDs by registering your device as a
+  // test device. Check the logs for your device's ID value.
+   String testDevice = 'YOUR_DEVICE_ID';
+   int maxFailedLoadAttempts = 3;
 
-  void initializeInterstitialAds() {
 
-    AppLovinMAX.setInterstitialListener(InterstitialListener(
-      onAdLoadedCallback: (ad) {
-        // Interstitial ad is ready to be shown. AppLovinMAX.isInterstitialReady(_interstitial_ad_unit_id) will now return 'true'
-        print('Interstitial ad loaded from ' + ad.networkName);
+  _showInterstitialAd()  {
 
-        // Reset retry attempt
-        _interstitialRetryAttempt = 0;
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
       },
-      onAdLoadFailedCallback: (adUnitId, error) {
-        // Interstitial ad failed to load
-        // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
-        _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
-
-        int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
-
-        print('Interstitial ad failed to load with code ' + error.code.toString() + ' - retrying in ' + retryDelay.toString() + 's');
-
-        Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
-          AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
-        });
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
       },
-      onAdDisplayedCallback: (ad) {
+    );
+    _interstitialAd.show();
+    _interstitialAd = null;
 
-      },
-      onAdDisplayFailedCallback: (ad, error) {
-       print('error : $error') ;
-      },
-      onAdClickedCallback: (ad) {
-
-      },
-      onAdHiddenCallback: (ad) {
-
-      },
-    ));
-
-    // Load the first interstitial
-    AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
   }
-  Future<void>_showInterstitialAd()async  {
-    bool isReady = (await AppLovinMAX.isInterstitialReady(AdsAppLovine.inistat_ad_unit_id));
-    if (isReady) {
-      AppLovinMAX.showInterstitial(AdsAppLovine.inistat_ad_unit_id);
-    }else {
-      initializeInterstitialAds() ;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: Ads.instit,
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd.setImmersiveMode(true);
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+
+
+  //////////// banner //
+
+  BannerAd _anchoredBanner;
+  bool _loadingAnchoredBanner = false;
+
+  Future<void> _createAnchoredBanner(BuildContext context) async {
+    const AdSize size =
+        AdSize.banner;
+
+    if (size == null) {
+      print('Unable to get height of anchored banner.');
+      return;
     }
 
+    final BannerAd banner = BannerAd(
+      size: AdSize.largeBanner,
+      request: AdRequest(),
+      adUnitId: Ads.banner,//'ca-app-pub-1803778669602445/6884931764',
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          print('$BannerAd loaded.');
+          setState(() {
+            _anchoredBanner = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('$BannerAd failedToLoad: $error');
+          ad.dispose();
+        },
+        onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
+        onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
+      ),
+    );
+    return banner.load();
   }
-  initializeBannerAds()
-  {
-    // Banners are automatically sized to 320x50 on phones and 728x90 on tablets
-    AppLovinMAX.createBanner(AdsAppLovine.banner_ad_unit_id, AdViewPosition.bottomCenter);
-    AppLovinMAX.setBannerBackgroundColor(AdsAppLovine.banner_ad_unit_id, "0xFFFFFF");
-    // For example, to set a white background, set the background color to 0xFFFFFF.
-
-
-  }
-
-
-  ////////////
 
 
 
@@ -102,6 +132,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     super.dispose();
     //_anchoredBanner?.dispose();
 
@@ -111,9 +142,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    initializeInterstitialAds() ;
-    initializeBannerAds() ;
-    AppLovinMAX.showBanner(AdsAppLovine.banner_ad_unit_id);
+    _createInterstitialAd();
     super.initState();
 
   }
@@ -129,6 +158,10 @@ class _HomePageState extends State<HomePage> {
     }
 
      */
+    if (!_loadingAnchoredBanner) {
+      _loadingAnchoredBanner = true;
+      _createAnchoredBanner(context);
+    }
 
 
     return WillPopScope(
@@ -527,6 +560,14 @@ class _HomePageState extends State<HomePage> {
          */
 
 
+
+        if(_anchoredBanner != null )
+          Container(
+            color:Colors.transparent ,
+            width: _anchoredBanner?.size.width.toDouble(),
+            height: _anchoredBanner?.size.height.toDouble(),
+            child: AdWidget(ad: _anchoredBanner),
+          ),
 
 
       ]),

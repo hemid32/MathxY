@@ -71,9 +71,11 @@ dependencies:
   #webview_flutter: ^0.3.11+1
   flutter_localizations :
     sdk:  flutter
-  google_mobile_ads: ^2.0.1
-  facebook_audience_network: ^1.0.1
-  applovin_max: ^2.1.0
+  #google_mobile_ads: ^2.0.1
+  #facebook_audience_network: ^1.0.1
+  #applovin_max: ^2.1.0
+  google_mobile_ads: ^2.3.0
+
 
 
 dev_dependencies:

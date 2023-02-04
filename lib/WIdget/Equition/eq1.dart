@@ -1,7 +1,6 @@
 
 import 'dart:math';
 
-import 'package:applovin_max/applovin_max.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -33,56 +32,36 @@ class _PgcdState1 extends State<Eqution1> {
   // *** ads
 
   // *** ads
-  var _interstitialRetryAttempt = 0;
+  BannerAd  _anchoredBanner;
+  bool _loadingAnchoredBanner = false;
 
-  void initializeInterstitialAds() {
-
-    AppLovinMAX.setInterstitialListener(InterstitialListener(
-      onAdLoadedCallback: (ad) {
-        // Interstitial ad is ready to be shown. AppLovinMAX.isInterstitialReady(_interstitial_ad_unit_id) will now return 'true'
-        print('Interstitial ad loaded from ' + ad.networkName);
-
-        // Reset retry attempt
-        _interstitialRetryAttempt = 0;
-      },
-      onAdLoadFailedCallback: (adUnitId, error) {
-        // Interstitial ad failed to load
-        // We recommend retrying with exponentially higher delays up to a maximum delay (in this case 64 seconds)
-        _interstitialRetryAttempt = _interstitialRetryAttempt + 1;
-
-        int retryDelay = pow(2, min(6, _interstitialRetryAttempt)).toInt();
-
-        print('Interstitial ad failed to load with code ' + error.code.toString() + ' - retrying in ' + retryDelay.toString() + 's');
-
-        Future.delayed(Duration(milliseconds: retryDelay * 1000), () {
-          AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
-        });
-      },
-      onAdDisplayedCallback: (ad) {
-
-      },
-      onAdDisplayFailedCallback: (ad, error) {
-
-      },
-      onAdClickedCallback: (ad) {
-
-      },
-      onAdHiddenCallback: (ad) {
-
-      },
-    ));
-
-    // Load the first interstitial
-    AppLovinMAX.loadInterstitial(AdsAppLovine.inistat_ad_unit_id);
+  Future<void> _createAnchoredBanner(BuildContext context) async {
+    //const AdSize size = AdSize.banner;
+    final BannerAd banner = BannerAd(
+      size: AdSize.banner,
+      request:const  AdRequest(),
+      adUnitId: Ads.banner, //'ca-app-pub-1803778669602445/6884931764',
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          debugPrint('$BannerAd loaded.');
+          setState(() {
+            _anchoredBanner = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          debugPrint('$BannerAd failedToLoad: $error');
+          ad.dispose();
+        },
+        onAdOpened: (Ad ad) => debugPrint('$BannerAd onAdOpened.'),
+        onAdClosed: (Ad ad) => debugPrint('$BannerAd onAdClosed.'),
+      ),
+    );
+    return banner.load();
   }
-  Future<void>_showInterstitialAd()async  {
-    print('dfddf') ;
-    bool isReady = (await AppLovinMAX.isInterstitialReady(AdsAppLovine.inistat_ad_unit_id));
-    if (isReady) {
-      AppLovinMAX.showInterstitial(AdsAppLovine.inistat_ad_unit_id);
-    }
 
-  }
+
+
+
 
 
 
@@ -128,7 +107,7 @@ class _PgcdState1 extends State<Eqution1> {
     a.dispose();
     b.dispose();
     //_anchoredAdaptiveAd?.dispose();
-
+   _anchoredBanner?.dispose() ;
     super.dispose();
   }
 
@@ -137,6 +116,11 @@ class _PgcdState1 extends State<Eqution1> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_loadingAnchoredBanner) {
+      _loadingAnchoredBanner = true;
+      _createAnchoredBanner(context);
+    }
+
     return  Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.limeAccent,
@@ -206,6 +190,14 @@ class _PgcdState1 extends State<Eqution1> {
               )  ,
             ),
         //_getAdWidget(),
+        _anchoredBanner != null
+            ? Container(
+          color: Colors.transparent,
+          width: _anchoredBanner.size.width.toDouble(),
+          height: _anchoredBanner.size.height.toDouble(),
+          child: AdWidget(ad: _anchoredBanner),
+        )
+            : const SizedBox(),
         Center(
           child: Container(
 
@@ -423,7 +415,6 @@ class _PgcdState1 extends State<Eqution1> {
                     minWidth: MediaQuery.of(context).size.width * 0.5,
                     padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                     onPressed: () async {
-                      _showInterstitialAd() ;
                       setState(() {
                         method = ' ';
                       });
